@@ -4,10 +4,11 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
 import java.io.FileWriter;
 import java.util.*;
 
-public class PrintTree {
+public class PrintTree implements Switcher {
 
     static class Node {
         private int id;
@@ -34,23 +35,17 @@ public class PrintTree {
                 forID.put(id, (new Node(id, label, parentId)));
                 forParent.put(parentId, ((id + ":" + label + ":" + parentId)));
                 list.add(new Node(id, label, parentId));
-                System.out.println("Parent ID has been set to zero. Root-level=0");
-                //TODO: remove sout
-                System.out.println(id + " " + label + " " + parentId);
 
-                return id + " " + label + " " + parentId;
+                return "Parent ID has been set to zero. Root-level=0\n" + id + " " + label + " " + parentId;
             }
-
             forID.put(id, (new Node(id, label, parentId)));
             forParent.put(parentId, ((id + ":" + label + ":" + parentId)));
             list.add(new Node(id, label, parentId));
         } else {
-            System.out.println("detected a duplicate of ID " + id);
             return id + " is a duplicate of ID, please enter again";
         }
         return id + " " + label + " " + parentId;
     }
-
 
 
     public int getNodeSize() {
@@ -67,55 +62,18 @@ public class PrintTree {
 
     }
 
-    public int getRootNodesSize() {
-        for (int i = 0; i < forParent.size(); i++) {
-            System.out.println("Size " + forParent.size());
+@Override
+    public String linkingNodes() {
 
-            return forParent.size();
+        List<String> childnodes = null;
+        int keyId = 0;
+        for (Integer key : forParent.keySet()) {
+            childnodes = forParent.get(key);
+            keyId = key;
         }
-        return 0;
+        return "Node ID - " + keyId + ": child nodes - " + childnodes;
     }
 
-    public int linkingNodes() {
-
-        int nodeID = 0;
-        int parentID = 0;
-        String nodeLable = null;
-        String fullNodeDetails = null;
-        String[] splitNodes = null;
-
-        for (Map.Entry<Integer, String> pId : forParent.entries()) {
-
-            fullNodeDetails = pId.getValue();
-            splitNodes = fullNodeDetails.split(":");
-            nodeID = Integer.parseInt(splitNodes[0]);
-            nodeLable = splitNodes[1];
-            parentID = Integer.parseInt(splitNodes[2]);
-
-
-
-//            System.out.println(/*fullNodeDetails+" -> "+*/nodeID+" -> "+nodeLable+" -> "+parentID);
-
-            for (Integer key : forID.keySet()) {// 56:[12 Avuyile 56, 34 Sbonelo 56]
-                System.out.print(key + ":" + forID.get(key));
-//                System.out.println(pId.getValue() + "-");
-
-                System.out.println(list.get(nodeID));
-                if (key.equals(parentID/*12*/)) {// if i use any number it.s prints diffrently
-//                    System.out.println(nodeID+" "+nodeLable+" "+parentID );
-                }
-            }
-
-        }
-
-
-        System.out.println(forParent.size());
-        System.out.println(forParent + " kkkkk ");
-
-
-
-        return 0;
-    }
 
     public String WriteToJSon() throws Exception {
 
@@ -127,10 +85,10 @@ public class PrintTree {
 
 
         JSONArray nodesList = new JSONArray();
+        JSONObject nodesObject = null;
         for (Map.Entry<Integer, String> json : forParent.entries()) {
             JSONObject nodesDetails = new JSONObject();
-            JSONObject nodesObject = new JSONObject();
-
+            nodesObject = new JSONObject();
 
 
             fullNodeDetails = json.getValue();
@@ -145,12 +103,11 @@ public class PrintTree {
             JSONArray childNodes = new JSONArray();
 
 
-            for (Integer key : forID.keySet()) {
-                if (key.equals(nodeID/*12*/)){
+            for (Integer key : forID.keySet()) {//bug
+                if (key.equals(forParent.get(parentID))) {
                     childNodes.add(nodeID);
                     childNodes.add(nodeLable);
                     childNodes.add(parentID);
-
                 }
             }
 
@@ -168,10 +125,10 @@ public class PrintTree {
             file.flush();
         }
 
-        return "g";
+        return String.valueOf(nodesObject);
     }
 
-    public void readNodes(JSONObject node){
+    public void readNodes(JSONObject node) {
 
         JSONObject nodesObject = (JSONObject) node.get("nodes");
 
@@ -181,19 +138,15 @@ public class PrintTree {
         Long nodeID = (Long) nodesObject.get("Node ID");
         JSONArray child = (JSONArray) nodesObject.get("child-node");
 //        System.out.println(employeeObject);// prints each node
-        System.out.print("Node ID: "+nodeID);
-        System.out.print(" Parent ID: "+parentID);
-        System.out.print(" Lable: "+label);
-        System.out.println(" child: "+ child);
+        System.out.print("Node ID: " + nodeID);
+        System.out.print(" Parent ID: " + parentID);
+        System.out.print(" Lable: " + label);
+        System.out.println(" child: " + child);
         System.out.println();
     }
 
 
-    public void printTree(List<Node> nodes) {
-
-        System.out.println("success");
-
-    }
+    public void printTree(List<Node> nodes) {}
 
 
 }

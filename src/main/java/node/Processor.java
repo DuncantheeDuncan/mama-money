@@ -12,15 +12,14 @@ import java.util.Scanner;
 
 public class Processor {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
-        PrintTree list = new PrintTree();// temp memory
+        PrintTree list = new PrintTree();
 //        PrintTreeUsingJDBC list = new PrintTreeUsingJDBC(); database
 
         System.out.print("number of nodes you want to add: ");
         int count = sc.nextInt();
         int id, parentId;
-//        String lable = " ";
 
 
         for (int i = 0; i < count; i++) {
@@ -30,29 +29,27 @@ public class Processor {
             System.out.println("please enter the parent id of the node");
             parentId = sc.nextInt();
 
-            sc.nextLine();// https://stackoverflow.com/a/13102066/669576
+            sc.nextLine();
             System.out.println("please enter the label of the node");
             String label = sc.nextLine();
 
             list.addData(id, label, parentId);
         }
 
-        list.printValues();// recorded data
-//        System.out.println(list.getRootNodes());
-
+        list.printValues();
+        list.WriteToJSon();
 
         PrintTree pp = new PrintTree();
         JSONParser jsonParser = new JSONParser();
 
-        try (FileReader reader = new FileReader("nodesfile.json"))
-        {
+        try (FileReader reader = new FileReader("nodesfile.json")) {
 
             Object obj = jsonParser.parse(reader);
 
             JSONArray employeeList = (JSONArray) obj;
-            System.out.println(employeeList + " short");
 
-            employeeList.forEach( emp -> {
+
+            employeeList.forEach(emp -> {
                 pp.readNodes((JSONObject) emp);
             });
 
