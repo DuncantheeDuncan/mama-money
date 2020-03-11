@@ -27,7 +27,7 @@ public class PrintTreeUsingJDBCTests {
     public void shouldAdd() throws SQLException, ClassNotFoundException {
 
         PrintTreeUsingJDBC add = new PrintTreeUsingJDBC();
-        add.addNodes(2, "phila", 5);
+//        add.addNodes(2, "phila", 5);
 
         assertEquals("K", "k");
     }
